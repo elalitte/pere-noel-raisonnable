@@ -51,7 +51,7 @@ function envoiMail($adresseMail, $prochaineAdresse) {
 }
 
 // On liste les utilsateurs dans un tableau
-$listUsers=["e.lalitte@intech-sud.fr", "m.duarte@ntech-sud.fr", "m.flausino@intech-sud.fr", "c.louberry@intech-sud.fr"];
+$listUsers=["e.lalitte@intech-sud.fr", "m.duarte@intech-sud.fr", "m.flausino@intech-sud.fr", "c.louberry@intech-sud.fr"];
 //$listUsers=["eric@lalitte.com", "elalitte@fastmail.fm", "elalitte@gmail.com"];
 // On les mélange
 shuffle($listUsers);
