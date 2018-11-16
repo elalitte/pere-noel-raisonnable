@@ -13,7 +13,7 @@ a:hover {
 .btn-secondary,
 .btn-secondary:hover,
 .btn-secondary:focus {
-  color: #333;
+  color: #ff0000;
   text-shadow: none; /* Prevent inheritance from `body` */
   background-color: #fff;
   border: .05rem solid #fff;
@@ -27,7 +27,7 @@ a:hover {
 html,
 body {
   height: 100%;
-  background-color: #ff0000;
+  background-color: #ff4747;
 }
 
 body {
@@ -39,7 +39,7 @@ body {
 }
 
 .cover-container {
-  max-width: 42em;
+  max-width: 68em;
 }
 
 

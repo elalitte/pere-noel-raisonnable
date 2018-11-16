@@ -1,9 +1,4 @@
-<?php
 
-include_once 'fonctions.php';
-include_once 'start.php';
-
-?>
 <!doctype html>
 <html lang="fr">
   <head>
@@ -22,23 +17,35 @@ include_once 'start.php';
     <link href="cover.css" rel="stylesheet">
   </head>
 
-  <body class="text-center">
+  <body>
 
     <div class="cover-container d-flex w-100 h-100 p-3 mx-auto flex-column">
-      <?php
-	      include_once 'isconnected.php';
-      ?>
+      <header class="masthead mb-auto">
+        <div class="inner">
+          <h3 class="masthead-brand"><a class="nav-link" href="index.php">pere-noel-raisonnable.fr</a></h3>
+          <nav class="nav nav-masthead justify-content-center">
+            <a class="nav-link" href="index.php">Accueil</a>
+            <a class="nav-link active" href="inscription.php">S'inscrire</a>
+            <a class="nav-link" href="connexion.php">Connexion</a>
+          </nav>
+        </div>
+      </header>
 
       <main role="main" class="inner cover">
-        <h1 class="cover-heading">Pour un Noël responsable, écologique et économique.</h1>
-        <p class="lead">Un seul cadeau à faire et à recevoir pour économiser nos ressources et notre planète ? c'est possible grâce à père Noël raisonnable !</p>
-        <p class="lead">
-          <a href="pourquoi.php" class="btn btn-lg btn-secondary">Comment ça marche ?</a>
-        </p>
-      </main>
+	  	<form>
+	  	<div class="row">
+	  	  <div class="col">
+	  	    <input type="text" class="form-control" placeholder="Nom/pseudo">
+	  	  </div>
+	  	  <div class="col">
+	  	    <input type="email" class="form-control" placeholder="Adresse mail">
+	  	  </div>
+	  	</div>
+	  	</form>  
+	  </main>
 
       <footer class="mastfoot mt-auto">
-        <div class="inner">
+        <div class="inner center">
           <p>Copyright Eric Lalitte.</p>
         </div>
       </footer>

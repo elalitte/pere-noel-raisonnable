@@ -22,23 +22,25 @@ include_once 'start.php';
     <link href="cover.css" rel="stylesheet">
   </head>
 
-  <body class="text-center">
+  <body>
 
     <div class="cover-container d-flex w-100 h-100 p-3 mx-auto flex-column">
-      <?php
+		<?php
 	      include_once 'isconnected.php';
-      ?>
+      	?>
 
       <main role="main" class="inner cover">
-        <h1 class="cover-heading">Pour un Noël responsable, écologique et économique.</h1>
-        <p class="lead">Un seul cadeau à faire et à recevoir pour économiser nos ressources et notre planète ? c'est possible grâce à père Noël raisonnable !</p>
-        <p class="lead">
-          <a href="pourquoi.php" class="btn btn-lg btn-secondary">Comment ça marche ?</a>
-        </p>
+	    <div class="jumbotron">
+			<h1 class="display-4">Un seul cadeau !</h1>
+			<p class="lead">Si vous avez <strong>la chance</strong> de recevoir des cadeaux de toutes les personnes de votre famille. Il vous arrive peut-être parfois de na <strong>pas avoir besoin</strong> de tous ces cadeaux. Vous devez aussi faire des cadeaux à tout le monde, et trouver le bon cadeau pour chacun n'est <strong>pas toujours facile</strong>, ni économique.</p>
+			<hr class="my-4">
+			<p class="lead">Père Noël raisonnable vous permet de créer <stong>une chaîne</stong> entre toutes les personnes de votre famille, collègues ou amis. Et chacun n'a plus alors qu'<stong>un seul cadeau</stong> à faire, et n'en recevra qu'un seul. Cela vous permettra de vous concentrer pour offrir <stong>le plus beau cadeau</stong> possible à la personne qui vous sera attribuée automatiquement par le site.</p>
+			<a class="btn btn-primary btn-lg" href="inscription.php" role="button">Je m'inscris !</a>
+		</div>
       </main>
 
       <footer class="mastfoot mt-auto">
-        <div class="inner">
+        <div class="inner center">
           <p>Copyright Eric Lalitte.</p>
         </div>
       </footer>

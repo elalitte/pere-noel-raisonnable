@@ -22,7 +22,7 @@ include_once 'start.php';
     <link href="cover.css" rel="stylesheet">
   </head>
 
-  <body class="text-center">
+  <body>
 
     <div class="cover-container d-flex w-100 h-100 p-3 mx-auto flex-column">
       <?php
@@ -30,15 +30,21 @@ include_once 'start.php';
       ?>
 
       <main role="main" class="inner cover">
-        <h1 class="cover-heading">Pour un Noël responsable, écologique et économique.</h1>
-        <p class="lead">Un seul cadeau à faire et à recevoir pour économiser nos ressources et notre planète ? c'est possible grâce à père Noël raisonnable !</p>
-        <p class="lead">
-          <a href="pourquoi.php" class="btn btn-lg btn-secondary">Comment ça marche ?</a>
-        </p>
+	    <form action="valid_connexion.php" method="post">
+		<div class="form-group">
+		  <label for="exampleInputEmail1">Adresse mail</label>
+		  <input type="email" class="form-control" id="exampleInputEmail1" name="email" aria-describedby="emailHelp" placeholder="Entrez l'adresse mail de votre compte">
+		</div>
+		<div class="form-group">
+		  <label for="exampleInputPassword1">Mot de passe</label>
+		  <input type="password" class="form-control" id="exampleInputPassword1" name="password" placeholder="Entrez votre mot de passe">
+		</div><br/>
+		<button type="submit" class="btn btn-primary">Se connecter</button>
+		</form>
       </main>
 
       <footer class="mastfoot mt-auto">
-        <div class="inner">
+        <div class="inner center">
           <p>Copyright Eric Lalitte.</p>
         </div>
       </footer>
