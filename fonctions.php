@@ -112,13 +112,17 @@ function affich_evenements($email,$bdd)
 		echo "<tr>";	 
 		echo "  <th scope='col'>Nom de l'événement</th>";
 		echo "  <th scope='col'></th>";
+        echo "  <th scope='col'></th>";
 		echo "</tr>";	 
 		echo "</thead>"; 
       while ($donnees = $req2->fetch())
       { 
         echo "<tr>";
         echo "<td>";
-        echo '&nbsp;' . $donnees['nomevenement'];
+        echo '&nbsp;'.$donnees['nomevenement'];
+        echo "</td>";
+        echo "<td>";
+        echo '<form action="gestionInvites.php" method="post"><input type="hidden" name="evenement" value="'.$donnees['nomevenement'].'"  /><button type="submit" class="btn btn-primary btn-sm">Editer la liste des invités</button></form>';
         echo "</td>";
         echo "<td>";
         echo '<form action="effaceEvenement.php" method="post"><input type="hidden" name="erased2" value="'.$donnees['nomevenement'].'"  /><button type="submit" class="btn btn-primary btn-sm">Effacer</button></form>';
@@ -294,40 +298,29 @@ function effaceCompteMFK($erased3,$bdd,$lang)
       echo '<br /><br /><a href="efface_compte.php">'.$backward2.'</a>';
 }
 
-// Fonction qui autorise à un compte l'adresse root@mailforkids.net
+// Fonction qui ajoute un Evenement à un compte
 // Renvoie rien
 function ajouterEvenement($evenement,$email,$id_user,$bdd)
 {
-	    $req5 = $bdd->prepare('SELECT nomevenement,id_user FROM users, evenements WHERE evenements.id_user = users.idusers AND users.email = :email AND evenements.nomevenement = :evenement ');
-        $req5->execute(array(
-          'email' => $email,
-          'evenement' => $evenment
+    $req5 = $bdd->prepare('SELECT nomevenement,id_user FROM users, evenements WHERE evenements.id_user = users.idusers AND users.email = :email AND evenements.nomevenement = :evenement ');
+    $req5->execute(array(
+        'email' => $email,
+        'evenement' => $evenement
+    ));
+    $donnees2 = $req5->fetch();
+    if ($donnees2['nomevenement'] != NULL) {
+        echo "<p>L'évènement que vous avez entré existe déjà !</p>";
+        echo '<a href="javascript:history.go(-1)"><button type="button" class="btn btn-primary">Retourner à la page de gestion des événements.</button></a>';
+    } else {
+        $req5->closeCursor();
+        $req3 = $bdd->prepare('INSERT INTO evenements( nomevenement, id_user ) VALUES( :evenement, :id_user )');
+        $req3->execute(array(
+            'evenement' => $evenement,
+            'id_user' => $id_user
         ));
-        $donnees2 = $req5->fetch();
-            if ($donnees2['nomevenement'] != NULL) {
-	        echo "L'évènement que vous avez entré existe déjà !";
-	        echo '<a href="javascript:history.go(-1)"><button type="button" class="btn btn-primary">Retourner à la page de gestion des événements.</button></a>';
-        }
-        else
-        {
-	        $req5->closeCursor();
-			$req3 = $bdd->prepare('INSERT INTO evenements( nomevenement, id_user ) VALUES( :evenement, :id_user )');
-			$req3->execute(array(
-				'evenement' => $evenement,
-				'id_user' => $id_user
-			));
-			$req3->closeCursor();
-        }
+        $req3->closeCursor();
         header('Location: gestionEvenements.php');
-}
-
-// Fonction qui ajoute une adresse mail au niveau unix
-// Renvoie rien
-function creationMailUnix($adressemail,$password)
-{
-		system('sudo /root/scripts/ajout_amavis.sh '.escapeshellcmd($adressemail));
-		system('sudo /root/scripts/ajout_postfix.sh '.escapeshellcmd($adressemail));
-        system('sudo /root/scripts/ajout_courier.sh '.escapeshellcmd($adressemail).' '.escapeshellcmd($password));
+    }
 }
 
 // Fonction qui ajoute une adresse mail au site

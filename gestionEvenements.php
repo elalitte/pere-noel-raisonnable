@@ -41,6 +41,7 @@ include_once 'start.php';
 			  	<li>Effacer ces événements.</li>
 			</ul>
 	  	</div>
+          <p>Cliquez sur un événement pour ajouter des participants</p>
 	  	<div>&nbsp;</div>
 	  	<div>&nbsp;</div>
 	  	<div class="col-md-4">
