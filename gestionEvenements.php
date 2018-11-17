@@ -37,14 +37,19 @@ include_once 'start.php';
 		  	<ul>
 			  	<li>Voir la liste de vos événements,</li>
 			  	<li>Créer des événements comme vos Noëls,</li>
+			  	<li>Accéder à la liste des invités d'un événement,</li>
 			  	<li>Effacer ces événements.</li>
 			</ul>
 	  	</div>
 	  	<div>&nbsp;</div>
 	  	<div>&nbsp;</div>
+	  	<div class="col-md-4">
 	  	<?php 
 		  	affich_evenements($_SESSION['email'], $bdd);
 		?>
+		</div>
+		<div>&nbsp;</div>
+	  	<div>&nbsp;</div>
 	  	<form action="ajoutEvenement.php" method="post">
 		<div class="form-group">
 		  <label for="exampleInputEmail1">Evènement</label>

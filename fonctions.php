@@ -107,21 +107,25 @@ function affich_evenements($email,$bdd)
     }
     else
     {
+	    echo "<table class='table table-sm table-bordered'>";
+	    echo "<thead>";
+		echo "<tr>";	 
+		echo "  <th scope='col'>Nom de l'événement</th>";
+		echo "  <th scope='col'></th>";
+		echo "</tr>";	 
+		echo "</thead>"; 
       while ($donnees = $req2->fetch())
-      {
-	    echo "<table class='table table-bordered'>"; 
+      { 
         echo "<tr>";
-/*
-        echo "<td>";
-        echo '<form action="efface.php" method="post"><input type="hidden" name="erased2" value=' . htmlspecialchars($donnees['nomevenement']) . ' /><input border=0 src="vue/images/delete.gif" type=image value=submit /></form>';
-        echo "</td>";
-*/
         echo "<td>";
         echo '&nbsp;' . $donnees['nomevenement'];
         echo "</td>";
+        echo "<td>";
+        echo '<form action="effaceEvenement.php" method="post"><input type="hidden" name="erased2" value="'.$donnees['nomevenement'].'"  /><button type="submit" class="btn btn-primary btn-sm">Effacer</button></form>';
+        echo "</td>";
         echo "</tr>";
-        echo "</table>"; 
       }
+        echo "</table>"; 
     $req2->closeCursor();
     }
 }
@@ -247,26 +251,25 @@ function affich_all_mails($bdd,$lang)
 
 // Fonction qui efface une adresse blacklistée dans la base
 // Renvoie rien
-function effaceAdresseBL($nom,$id,$erased2,$bdd,$lang)
+function effaceEvenement($evenement,$bdd)
 {
-include ('lang'.$lang.'.inc');
-if (isset($nom)) 
+	var_dump($evenement);
+if (isset($evenement)) 
     {
-      $req = $bdd->prepare('SELECT id FROM mailaddr WHERE email = ? ');
-      $req->execute(array($erased2));
+      $req = $bdd->prepare('SELECT nomevenement FROM evenements WHERE nomevenement = ? ');
+      $req->execute(array($evenement));
       $donnees = $req->fetch();
-      if ( $donnees['id'] != NULL )
+      if ( $donnees['nomevenement'] != NULL )
       {
-        $req2 = $bdd->prepare('DELETE FROM wblist WHERE sid = ? AND rid = ? ');
-        $req2->execute(array($donnees['id'],$id));
+        $req2 = $bdd->prepare('DELETE FROM evenements WHERE nomevenement = ? ');
+        $req2->execute(array($donnees['nomevenement']));
         $req2->closeCursor();
+        header('Location: gestionEvenements.php');
       }
       else
       {
-        echo "$wrongaddress";
+        echo "L'évènement à supprimer n'existe pas.";
       }
-      echo ''.$address.'<strong>' . htmlspecialchars($_POST['erased2']) . '</strong>'.$waserased.'';
-      echo '<br /><br /><a href="affichage_mfk.php">'.$backward.'</a>';
     }
 }
 
@@ -293,23 +296,29 @@ function effaceCompteMFK($erased3,$bdd,$lang)
 
 // Fonction qui autorise à un compte l'adresse root@mailforkids.net
 // Renvoie rien
-function AjoutMailParDefaut($adressemail,$bdd)
+function ajouterEvenement($evenement,$email,$id_user,$bdd)
 {
-        $req5 = $bdd->prepare('SELECT id FROM users WHERE email = ? ');
-        $req5->execute(array($adressemail));
+	    $req5 = $bdd->prepare('SELECT nomevenement,id_user FROM users, evenements WHERE evenements.id_user = users.idusers AND users.email = :email AND evenements.nomevenement = :evenement ');
+        $req5->execute(array(
+          'email' => $email,
+          'evenement' => $evenment
+        ));
         $donnees2 = $req5->fetch();
-        //echo $donnees2['id'];
-        $req5->closeCursor();
-        $req3 = $bdd->prepare('INSERT INTO wblist( rid, sid, wb ) VALUES( :rid, 50, "W" )');
-        $req3->execute(array(
-          'rid' => $donnees2['id']
-          ));
-        $req3->closeCursor();
-        $req4 = $bdd->prepare('INSERT INTO wblist( rid, sid, wb ) VALUES( :rid, 94, "W" )');
-        $req4->execute(array(
-          'rid' => $donnees2['id']
-          ));
-        $req4->closeCursor();
+            if ($donnees2['nomevenement'] != NULL) {
+	        echo "L'évènement que vous avez entré existe déjà !";
+	        echo '<a href="javascript:history.go(-1)"><button type="button" class="btn btn-primary">Retourner à la page de gestion des événements.</button></a>';
+        }
+        else
+        {
+	        $req5->closeCursor();
+			$req3 = $bdd->prepare('INSERT INTO evenements( nomevenement, id_user ) VALUES( :evenement, :id_user )');
+			$req3->execute(array(
+				'evenement' => $evenement,
+				'id_user' => $id_user
+			));
+			$req3->closeCursor();
+        }
+        header('Location: gestionEvenements.php');
 }
 
 // Fonction qui ajoute une adresse mail au niveau unix

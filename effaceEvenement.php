@@ -30,23 +30,14 @@ include_once 'start.php';
       ?>
 
       <main role="main" class="inner cover">
-	  	<?php
 
+	  	<?php
+	  	
+	  	include_once 'fonctions.php';
+	  	include_once 'start.php';
 	  	$bdd=db_connect();	
 	  	
-	  	if (preg_match("#^[a-z0-9._-]+@[a-z0-9._-]{2,}\.[a-z]{2,4}$#", $_POST['email'])) 
-	  	{
-		  $session=log_ok($_POST['email'], $_POST['password'], $bdd);
-		  if (isset($session['email'])) {
-			  $_SESSION=$session;
-			  header('Location: gestionEvenements.php');
-		  }
-	  	}
-	  	else
-	  	{
-		  	echo "Le format choisi pour votre adresse email n'est pas correct ou utilise des caractères interdits.<br /><br />";
-	  	    echo '<a href="javascript:history.go(-1)"><button type="button" class="btn btn-primary">Retourner à la page de connexion.</button></a>';
-	  	}
+	  	effaceEvenement($_POST['erased2'],$bdd);
 	  		
 	  	?>
 

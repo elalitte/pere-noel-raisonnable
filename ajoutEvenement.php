@@ -37,52 +37,14 @@ include_once 'start.php';
 	  	include_once 'start.php';
 	  	$bdd=db_connect();	
 	  	
-	  	if (preg_match("#^[a-zA-Z0-9._\ -]+$#", $_POST['nom']) AND preg_match("#^[a-zA-Z0-9._\ -]+$#", $_POST['prenom']) AND preg_match("#^[a-z0-9._-]+@[a-z0-9._-]{2,}\.[a-z]{2,4}$#", $_POST['email']) AND $_POST['pass1'] == $_POST['pass2'] ) 
+	  	if (preg_match("#^[a-zA-Z0-9._\ -]+$#", $_POST['evenement'])) 
 	  	{
-	  	  $password = sha1($_POST['pass1']);
-	  	  // On commence à tester si l'adresse entrée n'existe pas déjà
-	  	  $donnees = existenceAdresseMail($_POST['email'],$bdd);
-	  	  if ( $donnees['idusers'] == NULL )
-	  	  // Si elle n'existe pas, on l'ajoute !
-	  	  {
-	  	    // On l'ajoute dans la base users
-	  	    ajoutUser($_POST['prenom'],$_POST['nom'],$_POST['email'],$password,$bdd);
-	  	    $_SESSION['email']=$_POST['email'];
-	  	    echo "<p>Votre compte a bien été créé.</p><br />";
-	  	    echo '<a href="gestionEvenements.php"><button type="submit" class="btn btn-primary">Aller à la page de gestion de vos Noëls ou événements.</button></a>';
-	  	  }
-	  	  else
-	  	  // Sinon on indique que l'adresse existe déjà ! 
-	  	  {
-	  	    echo "<p>Désolé, un compte avec cette adresse email existe déjà.</p><br /><br />";
-	  	    echo '<a href="javascript:history.go(-1)"><button type="button" class="btn btn-primary">Retourner à la page d\'inscription</button></a>';
-	  	  }
+		  ajouterEvenement($_POST['evenement'], $_SESSION['email'], $_SESSION['id'],$bdd);	
 	  	}
 	  	else
 	  	{
-	  	  # Si l'adresse mail choisie est dans un format incorrect
-	  	  if (preg_match("#^[a-zA-Z0-9._\ -]+$#", $_POST['nom']) == 0)
-	  	  {
-	  	    echo "Le format choisi pour votre nom utilise des caractères interdits.<br /><br />";
-	  	    echo '<a href="javascript:history.go(-1)"><button type="button" class="btn btn-primary">Retourner à la page d\'inscription</button></a>';
-	  	  }
-	  	  else
-	  	  if (preg_match("#^[a-zA-Z0-9._\ -]+$#", $_POST['prenom']) == 0)
-	  	  {
-	  	    echo "Le format choisi pour votre prenom utilise des caractères interdits.<br /><br />";
-	  	    echo '<a href="javascript:history.go(-1)"><button type="button" class="btn btn-primary">Retourner à la page d\'inscription</button></a>';
-	  	  }
-	  	  else
-	  	  if (preg_match("#^[a-z0-9._-]+@[a-z0-9._-]{2,}\.[a-z]{2,4}$#", $_POST['email']) == 0)
-	  	  {
-	  	    echo "Le format choisi pour votre adresse email n'est pas correct ou utilise des caractères interdits.<br /><br />";
-	  	    echo '<a href="javascript:history.go(-1)"><button type="button" class="btn btn-primary">Retourner à la page d\'inscription</button></a>';
-	  	  }
-	  	  if ($_POST['pass1'] != $_POST['pass2'])
-	  	  {
-	  	    echo "Les deux mots de passe entrés ne sont pas les mêmes.<br /><br />";
-	  	    echo '<a href="javascript:history.go(-1)"><button type="button" class="btn btn-primary">Retourner à la page d\'inscription</button></a>';
-	  	  }
+	  	    echo "Le format choisi pour votre évènement utilise des caractères interdits.<br /><br />";
+	  	    echo '<a href="javascript:history.go(-1)"><button type="button" class="btn btn-primary">Retourner à la page de gestion des évènements</button></a>';
 	  	}
 	  		
 	  	?>
