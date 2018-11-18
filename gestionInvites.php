@@ -1,3 +1,9 @@
+<?php
+
+include_once 'fonctions.php';
+include_once 'start.php';
+
+?>
 
 <!doctype html>
 <html lang="fr">
@@ -20,28 +26,33 @@
   <body>
 
     <div class="cover-container d-flex w-100 h-100 p-3 mx-auto flex-column">
-      <header class="masthead mb-auto">
-        <div class="inner">
-          <h3 class="masthead-brand"><a class="nav-link" href="index.php">pere-noel-raisonnable.fr</a></h3>
-          <nav class="nav nav-masthead justify-content-center">
-            <a class="nav-link" href="index.php">Accueil</a>
-            <a class="nav-link active" href="inscription.php">S'inscrire</a>
-            <a class="nav-link" href="connexion.php">Connexion</a>
-          </nav>
-        </div>
-      </header>
+
+        <?php
+        include_once 'isconnected.php';
+        $bdd=db_connect();
+        ?>
 
       <main role="main" class="inner cover">
+          <h3><?php echo $_POST['evenement']; ?></h3>
+          <div>
+          <p>Ajoutez ici la liste des participants à l'évènement <?php echo $_POST['evenement']; ?></p>
 	  	<form>
 	  	<div class="row">
 	  	  <div class="col">
-	  	    <input type="text" class="form-control" placeholder="Nom/pseudo">
+              <label for="exampleInputEmail1">Nom/pseudo</label>
+	  	    <input type="text" class="form-control" placeholder="Tonton Michel">
 	  	  </div>
 	  	  <div class="col">
-	  	    <input type="email" class="form-control" placeholder="Adresse mail">
+              <label for="exampleInputEmail1">Adresse email</label>
+              <input type="email" class="form-control" placeholder="michmich@gmail.com">
 	  	  </div>
+            <div class="col">
+                <button type="submit" class="btn btn-primary">Ajouter l'évènement</button>
+            </div>
+
 	  	</div>
-	  	</form>  
+	  	</form>
+          </div>
 	  </main>
 
       <footer class="mastfoot mt-auto">

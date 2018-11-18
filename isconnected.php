@@ -10,6 +10,9 @@
 	    case "/pere-noel-raisonnable/inscription.php":
 		$inscription = "active";
         	break;
+        case "/pere-noel-raisonnable/gestionInvites.php":
+            $gestion = "active";
+            break;
         case "/pere-noel-raisonnable/connexion.php":
 		$connexion = "active";
         	break;

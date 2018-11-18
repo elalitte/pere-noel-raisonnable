@@ -37,7 +37,7 @@ include_once 'start.php';
 	  	include_once 'start.php';
 	  	$bdd=db_connect();	
 	  	
-	  	if (preg_match("#^[a-zA-Z0-9._\ -]+$#", $_POST['evenement'])) 
+	  	if (preg_match("#^[a-zA-Z0-9._\ -ë]+$#", $_POST['evenement']))
 	  	{
 		  ajouterEvenement($_POST['evenement'], $_SESSION['email'], $_SESSION['id'],$bdd);	
 	  	}
