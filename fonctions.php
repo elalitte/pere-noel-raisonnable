@@ -95,7 +95,7 @@ function miseAJourMotDePasseUserImap($email,$passwd)
 }
 
 
-// Fonction qui affiche tous les mails autorisés pour une personne donnée
+// Fonction qui affiche tous les evenements
 // Renvoie rien
 function affich_evenements($email,$bdd)
 {
@@ -112,17 +112,17 @@ function affich_evenements($email,$bdd)
 		echo "<tr>";	 
 		echo "  <th scope='col'>Nom de l'événement</th>";
 		echo "  <th scope='col'></th>";
-        echo "  <th scope='col'></th>";
+		echo "  <th scope='col'></th>";
 		echo "</tr>";	 
 		echo "</thead>"; 
       while ($donnees = $req2->fetch())
       { 
         echo "<tr>";
         echo "<td>";
-        echo '&nbsp;'.$donnees['nomevenement'];
+        echo '&nbsp;' . $donnees['nomevenement'];
         echo "</td>";
         echo "<td>";
-        echo '<form action="gestionInvites.php" method="post"><input type="hidden" name="evenement" value="'.$donnees['nomevenement'].'"  /><button type="submit" class="btn btn-primary btn-sm">Editer la liste des invités</button></form>';
+        echo '<form action="gestionInvites.php" method="post"><input type="hidden" name="evenement" value="'.$donnees['nomevenement'].'"  /><button type="submit" class="btn btn-primary btn-sm">Ajouter des invités</button></form>';
         echo "</td>";
         echo "<td>";
         echo '<form action="effaceEvenement.php" method="post"><input type="hidden" name="erased2" value="'.$donnees['nomevenement'].'"  /><button type="submit" class="btn btn-primary btn-sm">Effacer</button></form>';
@@ -133,6 +133,55 @@ function affich_evenements($email,$bdd)
     $req2->closeCursor();
     }
 }
+
+// Fonction qui affiche tous les invités à un événement
+// Renvoie rien
+function affich_invites($evenement,$email,$bdd)
+{
+	$req = $bdd->prepare('SELECT idevenements FROM evenements, users WHERE evenements.id_user = users.idusers AND email = :email AND nomevenement = :evenement ');
+    $req->execute(array(
+            'email' => $email,
+            'evenement' => $evenement
+            ));
+    $idEvenement = $req->fetch();
+    $req->closeCursor();
+    
+    $req2 = $bdd->prepare('SELECT pseudo, email FROM evenements, invites WHERE evenements.idevenements = invites.idevenement AND invites.idevenement = ? ');
+    $req2->execute(array($idEvenement[0]));
+
+    if ( $req2 == NULL )
+    {
+    echo "";
+    }
+    else
+    {
+	    echo "<table class='table table-sm table-bordered'>";
+	    echo "<thead>";
+		echo "<tr>";	 
+		echo "  <th scope='col'>Nom de l'invité</th>";
+		echo "  <th sscope='col'>Adresse email</th>";
+		echo "  <th scope='col'></th>";
+		echo "</tr>";	 
+		echo "</thead>"; 
+      while ($donnees = $req2->fetch())
+      { 
+        echo "<tr>";
+        echo "<td>";
+        echo '&nbsp;' . $donnees['pseudo'];
+        echo "</td>";
+        echo "<td>";
+        echo '&nbsp;' . $donnees['email'];
+        echo "</td>";
+        echo "<td>";
+        echo '<form action="effaceInvite.php" method="post"><input type="hidden" name="nomInvite" value="'.$donnees['pseudo'].'"  /><input type="hidden" name="emailInvite" value="'.$donnees['email'].'"  /><input type="hidden" name="evenement" value="'.$evenement.'"  /><button type="submit" class="btn btn-primary btn-sm">Effacer</button></form>';
+        echo "</td>";
+        echo "</tr>";
+      }
+        echo "</table>"; 
+    $req2->closeCursor();
+    }
+}
+
 
 // Fonction qui teste si un mail existe déjà
 // Renvoie un tableau contenant les infos correspondant au mail
@@ -253,11 +302,10 @@ function affich_all_mails($bdd,$lang)
     }
 }
 
-// Fonction qui efface une adresse blacklistée dans la base
+// Fonction qui efface un événement
 // Renvoie rien
 function effaceEvenement($evenement,$bdd)
 {
-	var_dump($evenement);
 if (isset($evenement)) 
     {
       $req = $bdd->prepare('SELECT nomevenement FROM evenements WHERE nomevenement = ? ');
@@ -276,6 +324,48 @@ if (isset($evenement))
       }
     }
 }
+
+// Fonction qui efface un invité à un événement
+// Renvoie rien
+function effaceInvite($nomInvite,$emailInvite,$evenement,$iduser,$bdd)
+{
+if (isset($nomInvite) && isset($emailInvite)) 
+    {
+	    $req7 = $bdd->prepare('SELECT idevenements FROM evenements, users WHERE evenements.id_user = users.idusers AND evenements.nomevenement = :evenement AND users.idusers = :iduser ');
+	    $req7->execute(array(
+            'evenement' => $evenement,
+            'iduser' => $iduser
+        ));
+		$idEvenement = $req7->fetch();
+		$req7->closeCursor();
+	    
+      $req = $bdd->prepare('SELECT pseudo, email FROM invites WHERE pseudo = :pseudo AND email = :email AND idevenement = :idevenement ');
+      $req->execute(array(
+            'pseudo' => $nomInvite,
+            'email' => $emailInvite,
+            'idevenement' => $idEvenement[0]
+        ));
+      $donnees = $req->fetch();
+      
+      if ( $donnees['pseudo'] != NULL )
+      {
+        $req2 = $bdd->prepare('DELETE FROM invites WHERE pseudo = ? ');
+        $req2->execute(array($nomInvite));
+        $req2->closeCursor();
+        header('Location: gestionInvites.php?evenement='.$evenement);
+/*
+        echo "L'invité à bien été supprimé.<br /><br />";
+        echo "<form action='gestionInvites.php' method='post'><input type='hidden' name='evenement' value='".$evenement."'  /><button type='submit' class='btn btn-primary btn-sm'>Retour à la page de gestion des invités</button></form>";
+*/
+      }
+      else
+      {
+        echo "L'invité à supprimer n'existe pas.<br /><br />";
+        echo "<form action='gestionInvites.php' method='post'><input type='hidden' name='evenement' value='".$evenement."'  /><button type='submit' class='btn btn-primary btn-sm'>Retour à la page de gestion des invités</button></form>";
+      }
+    }
+}
+
 
 // Fonction qui efface un compte MFK
 // Renvoie rien
@@ -298,29 +388,93 @@ function effaceCompteMFK($erased3,$bdd,$lang)
       echo '<br /><br /><a href="efface_compte.php">'.$backward2.'</a>';
 }
 
-// Fonction qui ajoute un Evenement à un compte
+// Fonction qui ajoute un événement à un compte
 // Renvoie rien
 function ajouterEvenement($evenement,$email,$id_user,$bdd)
 {
-    $req5 = $bdd->prepare('SELECT nomevenement,id_user FROM users, evenements WHERE evenements.id_user = users.idusers AND users.email = :email AND evenements.nomevenement = :evenement ');
-    $req5->execute(array(
-        'email' => $email,
-        'evenement' => $evenement
-    ));
-    $donnees2 = $req5->fetch();
-    if ($donnees2['nomevenement'] != NULL) {
-        echo "<p>L'évènement que vous avez entré existe déjà !</p>";
-        echo '<a href="javascript:history.go(-1)"><button type="button" class="btn btn-primary">Retourner à la page de gestion des événements.</button></a>';
-    } else {
-        $req5->closeCursor();
-        $req3 = $bdd->prepare('INSERT INTO evenements( nomevenement, id_user ) VALUES( :evenement, :id_user )');
-        $req3->execute(array(
-            'evenement' => $evenement,
-            'id_user' => $id_user
+	    $req5 = $bdd->prepare('SELECT nomevenement,id_user FROM users, evenements WHERE evenements.id_user = users.idusers AND users.email = :email AND evenements.nomevenement = :evenement ');
+        $req5->execute(array(
+          'email' => $email,
+          'evenement' => $evenement
         ));
-        $req3->closeCursor();
+        $donnees2 = $req5->fetch();
+        $req5->closeCursor();
+            if ($donnees2['nomevenement'] != NULL) {
+	        echo "L'évènement que vous avez entré existe déjà !";
+	        echo '<a href="javascript:history.go(-1)"><button type="button" class="btn btn-primary">Retourner à la page de gestion des événements.</button></a>';
+        }
+        else
+        {
+			$req3 = $bdd->prepare('INSERT INTO evenements( nomevenement, id_user ) VALUES( :evenement, :id_user )');
+			$req3->execute(array(
+				'evenement' => $evenement,
+				'id_user' => $id_user
+			));
+			$req3->closeCursor();
+        }
         header('Location: gestionEvenements.php');
-    }
+}
+
+// Fonction qui ajoute un invité à un événement
+// Renvoie rien
+function ajouterInvite($nomInvite,$emailInvite,$emailUser,$evenement,$bdd)
+{
+		$req = $bdd->prepare('SELECT idevenements FROM evenements, users WHERE evenements.id_user = users.idusers AND email = :email AND nomevenement = :evenement ');
+		$req->execute(array(
+            'email' => $emailUser,
+            'evenement' => $evenement
+        ));
+		$idEvenement = $req->fetch();
+		$req->closeCursor();
+		
+	    $req5 = $bdd->prepare('SELECT email FROM invites, evenements WHERE invites.email = :email AND idevenements = :evenement ');
+        $req5->execute(array(
+          'email' => $emailInvite,
+          'evenement' => $idEvenement[0]
+        ));
+        $donnees2 = $req5->fetch();
+        $req5->closeCursor();
+        
+        $req4 = $bdd->prepare('SELECT pseudo FROM invites, evenements WHERE invites.pseudo = :pseudo AND idevenements = :evenement ');
+        $req4->execute(array(
+          'pseudo' => $nomInvite,
+          'evenement' => $idEvenement[0]
+        ));
+        $donnees3 = $req4->fetch();
+        $req4->closeCursor();
+        
+        if ($donnees3[0] != NULL) {
+	        echo "Le nom de l'invité que vous avez entré existe déjà !<br /><br />";
+	        echo "<form action='gestionInvites.php' method='post'><input type='hidden' name='evenement' value='".$evenement."'  /><button type='submit' class='btn btn-primary btn-sm'>Retour à la page de gestion des invités</button></form>";
+        }
+        elseif ($donnees2[0] != NULL) {
+	        echo "L'adresse email de l'invité que vous avez entrée existe déjà !<br /><br />";
+	        echo "<form action='gestionInvites.php' method='post'><input type='hidden' name='evenement' value='".$evenement."'  /><button type='submit' class='btn btn-primary btn-sm'>Retour à la page de gestion des invités</button></form>";
+        } 
+        else
+        {
+			$req3 = $bdd->prepare('INSERT INTO invites( pseudo, email, idevenement ) VALUES( :pseudo, :email, :idevenement )');
+			$req3->execute(array(
+				'pseudo' => $nomInvite,
+				'email' => $emailInvite,
+				'idevenement' => $idEvenement[0]
+			));
+			$req3->closeCursor();
+			header('Location: gestionInvites.php?evenement='.$evenement);
+/*
+			echo "L'invité a bien été ajouté !<br/><br/>";
+	        echo "<form action='gestionInvites.php' method='post'><input type='hidden' name='evenement' value='".$evenement."'  /><button type='submit' class='btn btn-primary btn-sm'>Retour à la page de gestion des invités</button></form>"
+;*/
+        }
+}
+
+// Fonction qui ajoute une adresse mail au niveau unix
+// Renvoie rien
+function creationMailUnix($adressemail,$password)
+{
+		system('sudo /root/scripts/ajout_amavis.sh '.escapeshellcmd($adressemail));
+		system('sudo /root/scripts/ajout_postfix.sh '.escapeshellcmd($adressemail));
+        system('sudo /root/scripts/ajout_courier.sh '.escapeshellcmd($adressemail).' '.escapeshellcmd($password));
 }
 
 // Fonction qui ajoute une adresse mail au site
