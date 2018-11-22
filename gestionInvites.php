@@ -47,7 +47,7 @@ include_once 'start.php';
 		</div>
 	  	<div>&nbsp;</div>
 	  	<form action="ajoutInvite.php" method="post">
-		<div class="form-row">
+		<div class="row">
 	  	  <div class="col">
 			  <input type="text" class="form-control" name="nomInvite" placeholder="Nom/Pseudo">
 	  	  </div>
